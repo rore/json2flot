@@ -71,8 +71,10 @@
 	 * URLs and process them
 	 */
 	json2flot.startUpdate = function() {
-		doUpdate = true;
-		update();
+		if (!doUpdate){
+			doUpdate = true;
+			update();
+		}
 	}
 
 	/**
