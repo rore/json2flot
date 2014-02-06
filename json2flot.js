@@ -104,6 +104,14 @@
 		return graph;
 	}
 
+	function update() {
+		// check for the flag in case update was stopped
+		if (doUpdate) {
+			getAllMetrics();
+			setTimeout(update, updateInterval);
+		}
+	}
+
 	function getTicks() {
 		return new Date().getTime();
 	}
@@ -243,15 +251,7 @@
 			return null;
 		return node[metricName];
 	}
-	;
-
-	function update() {
-		// check for the flag in case update was stopped
-		if (doUpdate) {
-			getAllMetrics();
-			setTimeout(update, updateInterval);
-		}
-	}
+	
 
 	/**
 	 * Gets the metrics JSON from a URL
