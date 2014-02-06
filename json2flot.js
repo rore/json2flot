@@ -371,11 +371,12 @@
 					for ( var key in metric.childMetrics) {
 						if (metric.childMetrics.hasOwnProperty(key)) {
 							var child = metric.childMetrics[key];
+							var metricValid = isMetricValid(child, metricResults);
 							var v = collectMetric(child, metricResults);
-							if (v && null != sortedMetrics){
+							if (metricValid && v && null != sortedMetrics){
 								sortedMetrics.push({val:v, metric:child});
 							}
-							else if (v)
+							else if (metricValid && metric.data.length > 0)
 								data.push(child);
 						}
 					}
@@ -389,8 +390,9 @@
 						}
 					}
 				} else {
+					var metricValid = isMetricValid(metric, metricResults);
 					var v = collectMetric(metric, metricResults);
-					if (v)
+					if (metricValid && metric.data.length > 0)
 						data.push(metric);
 				}
 
@@ -402,15 +404,29 @@
 			graph.plot.draw();
 		}
 
+		function isMetricValid(metric, metricResults){
+			// if we have a custom filter function we need to collect all the 
+			// metric nodes and pass it to the filter
+			if (metric.filter){
+				var nodes = [];
+				for ( var n = 0; n < metricResults.results.length; n++) {
+					var metRes = metricResults.results[n];
+					var node = getMetricNode(metric.path, metRes);
+					if (node)
+						nodes.push(node);
+				}
+				return metric.filter(nodes);
+			}
+			return true;
+		}
+		
 		/**
 		 * collects a specific metric from the results
-		 * returns the collected value if found, or null if there's no metric or 
-		 * it was filtered out.
+		 * returns the collected value if found, or null if it was filtered out.
 		 */
 		function collectMetric(metric, metricResults) {
 			var val = null;
 			var metricCount = 0;
-			var metricValid = true;
 			// go over all the metric results we got now
 			for ( var n = 0; n < metricResults.results.length; n++) {
 				var metRes = metricResults.results[n];
@@ -425,6 +441,10 @@
 					}
 				}
 			}
+			// if we exceeded the requested number of points remove one
+			if (metric.data.length > graph.totalPoints) {
+				metric.data = metric.data.slice(1);
+			}
 			if (val) {
 				// avg means we need an average of the metric across all queries
 				// URLs
@@ -433,23 +453,11 @@
 				}
 				// create the current data
 				var series = [ metricResults.time.getTime(), val ];
-				// if we exceeded the requested number of points remove one
-				if (metric.data.length > graph.totalPoints) {
-					metric.data = metric.data.slice(1);
-				}
-				if (metric.filter){
-					// if we have a custom filter function we need to collect all the 
-					// metric nodes and pass it to the filter
-					var nodes = [];
-					for ( var n = 0; n < metricResults.results.length; n++) {
-						var metRes = metricResults.results[n];
-						var node = getMetricNode(metric.path, metRes);
-						if (node)
-							nodes.push(node);
-					}
-					metricValid = metric.filter(nodes);
-				}
 				metric.data.push(series);
+				metric.data = metric.data.sort(function (a, b) {
+				    return a[0] - b[0];
+				});
+				// sort the data by time in case we got a late response
 				if (metricValid)
 					return val;
 			}
