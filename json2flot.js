@@ -350,6 +350,7 @@
 	 *            our updater object with all the metrics responses
 	 */
 	function processMetrics(metricResults) {
+		if (!doUpdate) return;
 		// go over all the registered graphs
 		for ( var i = 0; i < graphs.length; i++) {
 			var graph = graphs[i];
