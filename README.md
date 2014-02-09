@@ -1,4 +1,4 @@
-json2flot - JSON metrics graph using flot
+json2flot - graphing metrics using flot
 =========
 json2flot is a small Javascript library for collecting, aggregating and plotting real-time metrics using the [flot] (http://www.flotcharts.org/) plotting library.
 
@@ -140,7 +140,7 @@ For example, if we have a metrics JSON that holds counters for several API calls
  }
 }
  ```
-We can define a metric that collects the counters for all API calls:
+We can define a "parent" metric that collect the metrics for all the API calls (each one will appear as a separate metric in the graph):
 ```javascript
 {
 	path : ["counters"],
@@ -150,12 +150,12 @@ We can define a metric that collects the counters for all API calls:
 	metric : "count"
 }
 ```
-When using a *regular expression metric* the metric **label** can be set to use a capture group from the regular expression. 
+When using a *regular expression metric* the metric **label** can be set to use a capture group from the regular expression.    
 For example:
 ```javascript
 label : "API $1 calls"
 ``` 
-You can set the metric to show only the top N child metrics. This metrics are sorted by the value of the last data point.    
+You can set the metric to show only the top N child metrics with the **showTop** field. The child metrics are sorted by the value of the last data point.    
 For example, showing only the top 2 API calls:
 ```javascript
 {
@@ -171,7 +171,7 @@ For example, showing only the top 2 API calls:
 }
 ```
 #####Filtering child metrics
-You can **filter** child metrics according to other fields in the selected node. To do that, pass a filter function in the **filter** field of the metric object. This function will receive an array of nodes (one from each URL). You can then process the nodes and return *true* to include the metric or *false* to exclude it from the collection.   
+You can filter child metrics according to other fields in the selected node. To do that, pass a filter function in the **filter** field of the metric object. This function will receive an array of nodes (one from each URL). You can then process the nodes and return *true* to include the metric or *false* to exclude it from the collection.   
 For example, if our JSON contains timer objects for our API calls, each one with *m1_rate* field indicating the rate in the last minute and a *mean* field indicating the mean latency:
 ```javascript
 {
@@ -183,7 +183,7 @@ For example, if our JSON contains timer objects for our API calls, each one with
  }
 }
 ```
-We can show the top 5 latencies of API calls that had over 2 req/sec in the last minutes like this:
+We can show the top 5 latencies of API calls that had over 2 requests in the last minutes like this:
 ```javascript
 {
 	path : [ "timers" ],
