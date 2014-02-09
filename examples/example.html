@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>json2flot Example Dashboard</title>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+<link href="example.css" rel="stylesheet" type="text/css">
+<script language="javascript" type="text/javascript" src="../jquery-2.1.0.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="../jquery.flot.time.js"></script>
+<script language="javascript" type="text/javascript" src="../jquery.flot.resize.js"></script>
+<script language="javascript" type="text/javascript" src="../jquery.flot.hiddengraphs.js"></script>
+<script language="javascript" type="text/javascript" src="../json2flot.js"></script>
+<script type="text/javascript">
+	$(function() {
+
+		// default update interval
+		var updateInterval = 2000;
+
+		// a custom formatter for displaying the latency axis
+		function msFormatter(times) {
+			return function(v, axis) {
+				return (v * times).toFixed(0) + "MS";
+			}
+		}
+
+		// hook up text box changes
+		$('#connectUrl').on('change', function() {
+			var hosts = $("#connectUrl").val().split(",");
+			json2flot.setMetricURLs(hosts);
+		});
+
+		$("#updateInterval").val(updateInterval).change(function() {
+			var v = $(this).val();
+			json2flot.setUpdateInterval(v);
+			$(this).val("" + json2flot.getUpdateInterval());
+		});
+
+		// flot options object to set up the axes
+		var options = {
+			lines : {
+				show : true
+			},
+			points : {
+				show : false
+			},
+			xaxes : [ {
+				mode : "time",
+				timeformat : "%H:%M:%S",
+				minTickSize : [ 1, "second" ]
+			} ],
+			yaxes : [ {
+				min : 0,
+				position : "left"
+			}, {
+				min : 0,
+				position : "right",
+				tickFormatter : msFormatter(1000)
+			} ],
+			legend : {
+				position : "sw",
+				hideable : true
+			},
+			grid : {
+				hoverable : true
+			}
+		};
+
+		// a tooltip function for the graph
+		function tooltipFunc(times) {
+			return function(event, pos, item) {
+				if (item) {
+					var axis = item.series.yaxis.n;
+					if (axis == 2) {
+						var y = (item.datapoint[1] * times).toFixed(2);
+						$("#tooltip").html(item.series.label + ": " + y + " MS").css({
+							top : item.pageY + 5,
+							left : item.pageX + 5
+						}).fadeIn(200);
+					} else {
+						var y = (item.datapoint[1]).toFixed(2);
+						$("#tooltip").html(item.series.label + ": " + y).css({
+							top : item.pageY + 5,
+							left : item.pageX + 5
+						}).fadeIn(200);
+					}
+				} else {
+					$("#tooltip").hide();
+				}
+			}
+		}
+
+		// the tooltip style
+		$("<div id='tooltip'></div>").css({
+			position : "absolute",
+			display : "none",
+			border : "1px solid #fdd",
+			padding : "2px",
+			"background-color" : "#fee",
+			opacity : 0.80
+		}).appendTo("body");
+
+		// hook up the tooltips
+		$("#placeholder1").bind("plothover", tooltipFunc(1000));
+		$("#placeholder2").bind("plothover", tooltipFunc(1000));
+		
+		// initialize json2flot with the urls
+		var hosts = $("#connectUrl").val().split(",");
+		json2flot.setMetricURLs(hosts);
+		// initialize json2flot with the update interval 
+		var v = $("#updateInterval").val();
+		json2flot.setUpdateInterval(v);
+
+		// the total number of points to keep in the graph
+		var totalPoints = 500;
+		
+		// initialize the first graph
+		json2flot.addGraph("#placeholder1", options, [ {
+			// a simple metric to get from a single node
+			// the node path
+			path : [ "timers", "API.get" ],
+			// the metric field to get
+			metric : "m1_rate",
+			// the label in the graph
+			label : "Total Get calls"
+		}, {
+			// gets a metric from multiple nodes where the key matches the given regex
+			// the root node path
+			path : ["timers"],
+			// the regex to match child nodes with
+			keyRegex : "API\\.get\\.(.*)",
+			// the metric field
+			metric : "m1_rate",
+			// the label in the graph. you can use a match group from the key regex
+			label : "$1 Get calls",
+			// show only the top 5 (according to the last metric value)
+			showTop : 5
+		}], totalPoints );
+
+		// initialize the second graph
+		json2flot.addGraph("#placeholder2", options, [ {
+			path : [ "timers", "API.get" ],
+			metric : "mean",
+			label : "Avg Get latency",
+			yaxis : 2,
+			// calculate an avarage of the metric values from the separate results 
+			operation : "avg"
+		}, {
+			path : [ "timers" ],
+			keyRegex : "API\\.get\\.(.*)",
+			metric : "mean",
+			label : "$1 Get latency",
+			yaxis : 2,
+			// calculate an avarage of the metric values from the separate results 
+			operation : "avg",
+			// show only the top 5 (according to the last metric value)
+			showTop : 5,
+			// show only nodes that pass this filter. gets an array of metric nodes. 
+			// we can look up another value in the node that we want to filter by.
+			// in this example we show the latency only for metrics that have 
+			// a request rate > 2 in the last minute
+			filter : function(nodes) {
+				var val = 0.0;
+				for ( var n = 0; n < nodes.length; n++) {
+					var node = nodes[n];
+					if (node && node["m1_rate"])
+						val += node["m1_rate"];
+				}
+				if (val > 2)
+					return true;
+				return false;
+			}
+		}], totalPoints  );
+
+		// set the data type for the fetch request. since this example uses a static file 
+		// we set it to "json". to get data for AJAX use "jsonp".
+		json2flot.setDataType("json");
+
+		// start fetching the data and updating the graphs
+		startUpdate();
+		
+		$('#startUpdate').on('click', function() {
+			startUpdate();
+		});
+		$('#stopUpdate').on('click', function() {
+			stopUpdate();
+		});
+		
+		function startUpdate() {
+			json2flot.startUpdate();
+			$('#startUpdate')[0].style.color = "gray";
+			$('#stopUpdate')[0].style.color = null;
+		}
+		function stopUpdate() {
+			json2flot.stopUpdate();
+			$('#startUpdate')[0].style.color = null;
+			$('#stopUpdate')[0].style.color = "gray";
+		}
+	});
+</script>
+</head>
+<body>
+
+	<div id="header">
+		<h1>json2flot Example Dashboard</h1>
+	</div>
+
+	<div class="pure-g-r">
+		<div class="pure-u-1-5">Comma separated list of URLs:</div>
+		<div class="pure-u-1-3">
+			<div id="connect">
+				<input id="connectUrl"
+					value="metrics.js,metrics2.js"
+					style="width: 80%">
+			</div>
+
+		</div>
+
+		<div class="pure-u-1-4">
+			<input id="startUpdate" type="button" value="Start"> <input id="stopUpdate" type="button" value="Stop">
+		</div>
+	</div>
+	<p>
+	<div class="pure-g-r">
+		<div class="pure-u-1-5">Time between updates:</div>
+
+		<div class="pure-u-1-3">
+			<input id="updateInterval" type="text" value="" style="text-align: right; width: 4em"> milliseconds
+		</div>
+
+
+	</div>
+	<p>
+	<div class="pure-g-r">
+		<div class="pure-u-1-2">
+			<div class="demo-container">
+				Get API req/sec
+				<div id="placeholder1" class="demo-placeholder"></div>
+			</div>
+		</div>
+		<div class="pure-u-1-2">
+			<div class="demo-container">
+				Get API latency
+				<div id="placeholder2" class="demo-placeholder"></div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
