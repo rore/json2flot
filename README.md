@@ -12,7 +12,7 @@ An example use case is monitoring a cluster of servers exposing statistics and c
 (For a full usage example see the example.html file under the examples folder)
 ###Basic usage
 Include the json2flot.js file in your HTML, along with the needed flot JS files.   
-Add a placeholder div for the flot graph: 
+Add a placeholder div for the flot graph (make sure you give it a size): 
 ```html
 <div id="placeholder1"></div>
 ```
