@@ -5,7 +5,8 @@ json2flot is a small Javascript library for collecting, aggregating and plotting
 The purpose of this library is building quick-and-dirty client-side-only dashboards, for graphing real-time metrics that are provided via a JSON API.   
 Initially this library targeted the output of the codahale [metrics] (http://metrics.codahale.com/) library, but in principle it can be used with any JSON formatted data.
 
-An example use case is monitoring a cluster of servers exposing statistics and counters via an API. json2flot makes it easy to build a dashboard to show the real-time state of the cluster with no additional server-side requirements. It can collect the metrics from all the servers, aggregate and plot them on the client side.  
+An example use case is monitoring a cluster of servers exposing statistics and counters via an API. json2flot makes it easy to build a dashboard to show the real-time state of the cluster with no additional server-side requirements. It can collect the metrics from all the servers, aggregate and plot them on the client side.     
+
 ![](https://github.com/rore/json2flot/blob/master/examplesnip.JPG?raw=true)
 ##Usage 
 (For a full usage example see the example.html file under the examples folder)
