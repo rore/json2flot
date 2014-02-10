@@ -341,6 +341,8 @@
 			console.warn("error getting metrics from URL: " + updater.urls[pos]);
 		else if (result && result.statusText && (result.statusText == "error" || result.statusText == "parsererror"))
 			console.warn("error getting metrics from URL: " + updater.urls[pos]);
+		else if (result && result.status != 200 && result.statusText)
+			console.warn("error getting metrics from URL: " + result.statusText);
 		else
 			updater.results.push(result);
 	}
