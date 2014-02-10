@@ -373,7 +373,7 @@
 							var child = metric.childMetrics[key];
 							var metricValid = isMetricValid(child, metricResults);
 							var v = collectMetric(child, metricResults);
-							if (metricValid && v && null != sortedMetrics){
+							if (metricValid && (null != v || child.data.length > 0) && null != sortedMetrics){
 								sortedMetrics.push({val:v, metric:child});
 							}
 							else if (metricValid && metric.data.length > 0)
@@ -432,7 +432,7 @@
 				var metRes = metricResults.results[n];
 				// look for the value of the metric we need
 				var metval = getMetric(metric.path, metric.metric, metRes);
-				if (metval) {
+				if (null != metval) {
 					metricCount += 1;
 					if (null == val)
 						val = metval;
@@ -445,7 +445,9 @@
 			if (metric.data.length > graph.totalPoints) {
 				metric.data = metric.data.slice(1);
 			}
-			if (val) {
+			if (metric.ignoreZeros && 0 == val)
+				val = null;
+			if (null != val) {
 				// avg means we need an average of the metric across all queries
 				// URLs
 				if (metric.operation == "avg") {

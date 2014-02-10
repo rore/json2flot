@@ -134,7 +134,9 @@
 			// the label in the graph. you can use a match group from the key regex
 			label : "$1 Get calls",
 			// show only the top 5 (according to the last metric value)
-			showTop : 5
+			showTop : 5,
+			// ignore metrics with zero value
+			ignoreZeros : true
 		}], totalPoints );
 
 		// initialize the second graph

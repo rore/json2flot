@@ -103,12 +103,16 @@ The metric object must include two additional fields:
  ```javascript
  // This gets the metric from a JSON like: 
  // { "timers" : {  "API.get" : { "count" : 48, "m1_rate" : 1  } } }
- {
+{
 	// the node path
 	path : [ "timers", "API.get" ],
 	// the metric field to get
 	metric : "m1_rate"
 }
+```
+By default, when the value of the metric is 0 it is treated as a valid metric. There are times where you might want to handle 0 values as missing metrics (for instance, if you graph a lot of metrics on a single graph but want it to present only the non-zero ones). To do that, set the **ignoreZeros** field to true: 
+```javascript
+ignoreZeros : true
 ```
 #####Aggregation operation
 As mentioned, when several URLs are configured, the library will fetch the JSON from each URL, and will aggregated the requested metric from all the responses. It's possible to define the aggregation operation for the metric by using the **operation** field. The default value is *"sum"*, which means the values are summed up. Another option is *"avg"* which will calculate the average of the values across all the URL responses.   
