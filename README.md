@@ -21,6 +21,18 @@ json2flot.setMetricURLs(["metrics.json"]);
 ```
 Initialize the graph:
 ```javascript 
+// flot options object to set up the axes
+var options = {
+	lines : {
+		show : true
+	},
+	xaxes : [ {
+		mode : "time",
+		timeformat : "%H:%M:%S",
+		minTickSize : [ 1, "second" ]
+	} ]
+};
+// initialize the graph
 json2flot.addGraph("#placeholder1", options, [ {
 	// a simple metric to get from a single node
 	// the node path
