@@ -186,6 +186,10 @@
 				metric.regexLabel = metric.label;
 				metric.label = null;
 			}
+			else if (metric.showSeparate){
+				metric.childMetrics = {};
+				metric.label = null;
+			}
 		}
 
 		this.initMetric = prepareMetric;
@@ -391,7 +395,11 @@
 							data.push(sortedMetrics[n].metric);
 						}
 					}
-				} else {
+				}
+				else if (metric.showSeparate){
+					
+				}
+				else {
 					var metricValid = isMetricValid(metric, metricResults);
 					var v = collectMetric(metric, metricResults);
 					if (metricValid && metric.data.length > 0)
@@ -468,7 +476,7 @@
 			return null;
 		}
 
-		function createChildMetrics(metric, metricData, graph) {
+		function createChildMetrics(metric, metricResults, graph) {
 			// go over all the results and collect all the keys that pass the
 			// regex
 			for ( var n = 0; n < metricResults.results.length; n++) {

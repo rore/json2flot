@@ -103,6 +103,7 @@
 		// hook up the tooltips
 		$("#placeholder1").bind("plothover", tooltipFunc(1000));
 		$("#placeholder2").bind("plothover", tooltipFunc(1000));
+		$("#placeholder3").bind("plothover", tooltipFunc(1000));
 		
 		// initialize json2flot with the urls
 		var hosts = $("#connectUrl").val().split(",");
@@ -172,6 +173,23 @@
 					return true;
 				return false;
 			}
+		}], totalPoints  );
+
+		// initialize the third graph
+		json2flot.addGraph("#placeholder3", options, [ {
+			path : [ "timers", "API.get" ],
+			metric : "mean",
+			label : "Avg Get latency",
+			yaxis : 2,
+			// calculate an avarage of the metric values from the separate results 
+			operation : "avg"
+		}, {
+			path : [ "timers", "API.get" ],
+			metric : "mean",
+			label : "$url latency",
+			yaxis : 2,
+			// show the metrics from the separate metric urls results
+			showSeparate : true
 		}], totalPoints  );
 
 		// set the data type for the fetch request. since this example uses a static file 
@@ -244,6 +262,12 @@
 			<div class="demo-container">
 				Get API latency
 				<div id="placeholder2" class="demo-placeholder"></div>
+			</div>
+		</div>
+		<div class="pure-u-1-2">
+			<div class="demo-container">
+				Get API latency
+				<div id="placeholder3" class="demo-placeholder"></div>
 			</div>
 		</div>
 	</div>
