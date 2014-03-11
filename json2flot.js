@@ -85,6 +85,14 @@
 	}
 
 	/**
+	 * Allow customization of the ajax request options
+	 * @param map the default request options.
+	 */
+	json2flot.setRequestOptions = function(map) {
+		requestOptions = map;
+	}
+
+	/**
 	 * Add a graph to plot some metrics.
 	 * 
 	 * @param placeholder
@@ -211,6 +219,10 @@
 	 * The data type to get in the request. Options are jsonp and json
 	 */
 	var dataType = "jsonp";
+	/**
+	 * The ajax request options
+	 */
+	var requestOptions = { };
 
 	/**
 	 * Returns a metric node
@@ -257,7 +269,9 @@
 	 * Gets the metrics JSON from a URL
 	 */
 	function getMetrics(url) {
-		return $.get(url, null, null, dataType);
+		return $.ajax($.type(url) === 'string'
+			? $.extend({}, requestOptions, {url: url, dataType: dataType})
+			: $.extend({}, requestOptions, {dataType: dataType}, url));
 	}
 
 	/**
