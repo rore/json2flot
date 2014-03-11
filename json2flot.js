@@ -293,8 +293,7 @@
 			for (index = 0; index < metricUrls.length; ++index) {
 				var host = metricUrls[index];
 				if (host) {
-					var def = getMetrics(host);
-					deferred.push(def);
+					deferred.push(getMetrics(host));
 				}
 			}
 			if (deferred.length > 0) {
