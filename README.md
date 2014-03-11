@@ -49,6 +49,15 @@ Start updating:
 json2flot.startUpdate();
 ```
 ###json2flot Methods
+####setDataType
+Sets the default data type for the JSON fetch request.   
+Use "json" for a local file, "jsonp" for an AJAX cross-domain call.
+
+Example:
+```javascript 
+json2flot.setDataType('jsonp');
+```
+
 ####setMetricURLs
 Sets an array of URLs to fetch the metrics JSON from.    
 The response metrics JSON is assumed to be of the same type. json2flot will fetch the response from each of the provided URLs, and will aggregate the requested metric values across all the responses. 
@@ -57,6 +66,14 @@ Example:
 ```javascript 
 json2flot.setMetricURLs(["http://server01/stats.json","http://server02/stats.json"]);
 ```
+You can also pass a JQuery ajax settings object in the URLs array to override the default fetch behavior.    
+So for example, fetch URLs by default as jsonp via GET, but configure some specific ones as json via POST: 
+```javascript
+json2flot.setMetricURLs([
+  "http://some.host.com/some/url",
+  { dataType: "json", type:"POST", url:"http://other.host.net/other/url"}
+]);
+```
 ####setUpdateInterval
 Sets the interval (in milliseconds) for fetching the metrics and updating the graphs.
 
@@ -64,13 +81,12 @@ Example:
 ```javascript 
 json2flot.setUpdateInterval(2000);
 ```
-####setDataType
-Sets the data type for the JSON fetch request.   
-Use "json" for a local file, "jsonp" for an AJAX cross-domain call.
+####setRequestOptions
+Sets the default ajax request settings object.
 
 Example:
 ```javascript 
-json2flot.setDataType('jsonp');
+json2flot.setRequestOptions({ dataType: "json", type:"GET" });
 ```
 ####startUpdate
 Starts the updater timer. json2flot will fetch the metrics from the provided URLs at the configured update interval, aggregate the results and update the graphs.
