@@ -245,7 +245,6 @@
 		}
 		return node;
 	}
-	;
 
 	/**
 	 * Returns a specific metric
