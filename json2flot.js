@@ -85,6 +85,14 @@
 	}
 
 	/**
+	 * Allow customization of the ajax request options
+	 * @param map the default request options.
+	 */
+	json2flot.setRequestOptions = function(map) {
+		requestOptions = map;
+	}
+
+	/**
 	 * Add a graph to plot some metrics.
 	 * 
 	 * @param placeholder
@@ -211,6 +219,10 @@
 	 * The data type to get in the request. Options are jsonp and json
 	 */
 	var dataType = "jsonp";
+	/**
+	 * The ajax request options
+	 */
+	var requestOptions = { };
 
 	/**
 	 * Returns a metric node
@@ -233,7 +245,6 @@
 		}
 		return node;
 	}
-	;
 
 	/**
 	 * Returns a specific metric
@@ -257,7 +268,9 @@
 	 * Gets the metrics JSON from a URL
 	 */
 	function getMetrics(url) {
-		return $.get(url, null, null, dataType);
+		return $.ajax($.type(url) === 'string'
+			? $.extend({}, requestOptions, {url: url, dataType: dataType})
+			: $.extend({}, requestOptions, {dataType: dataType}, url));
 	}
 
 	/**
@@ -280,8 +293,7 @@
 			for (index = 0; index < metricUrls.length; ++index) {
 				var host = metricUrls[index];
 				if (host) {
-					var def = getMetrics(host);
-					deferred.push(def);
+					deferred.push(getMetrics(host));
 				}
 			}
 			if (deferred.length > 0) {
@@ -339,6 +351,8 @@
 			updater.results.push(result[0]);
 		else if (result && result.length == 3 && result[1] == "error")
 			console.warn("error getting metrics from URL: " + updater.urls[pos]);
+		else if (result && result.length == 3 && result[1] == "parsererror")
+			console.warn("error getting metrics from URL: " + updater.urls[pos], result[2]);
 		else if (result && result.statusText && (result.statusText == "error" || result.statusText == "parsererror"))
 			console.warn("error getting metrics from URL: " + updater.urls[pos]);
 		else if (result && result.status != 200 && result.statusText)
