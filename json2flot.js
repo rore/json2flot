@@ -382,7 +382,7 @@
 					createChildMetrics(metric, metricResults, graph);
 					// now collect the metrics
 					var sortedMetrics = null;
-					if (metric.showTop && (metric.showTop > 0 || metric.showBottom > 0))
+					if ((metric.showTop && metric.showTop > 0 || (metric.showBottom && metric.showBottom > 0))
 						sortedMetrics = [];
 					for ( var key in metric.childMetrics) {
 						if (metric.childMetrics.hasOwnProperty(key)) {
