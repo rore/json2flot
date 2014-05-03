@@ -382,7 +382,7 @@
 					createChildMetrics(metric, metricResults, graph);
 					// now collect the metrics
 					var sortedMetrics = null;
-					if (metric.showTop && metric.showTop > 0)
+					if ((metric.showTop && metric.showTop > 0 || (metric.showBottom && metric.showBottom > 0))
 						sortedMetrics = [];
 					for ( var key in metric.childMetrics) {
 						if (metric.childMetrics.hasOwnProperty(key)) {
@@ -400,8 +400,12 @@
 						sortedMetrics = sortedMetrics.sort(function (a, b) {
 						    return b.val - a.val;
 						});
-						var stop = Math.min(sortedMetrics.length, metric.showTop);
+						var stop = Math.min(sortedMetrics.length, Math.max(0, metric.showTop));
 						for ( var n = 0; n < stop; n++) {
+							data.push(sortedMetrics[n].metric);
+						}
+						var start = Math.max(stop, sortedMetrics.length - Math.min(0, metric.showBottom));
+						for ( var n = start; n < sortedMetrics.length; n++) {
 							data.push(sortedMetrics[n].metric);
 						}
 					}

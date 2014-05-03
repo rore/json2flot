@@ -203,6 +203,22 @@ For example, showing only the top 2 API calls:
 	showTop : 2
 }
 ```
+You can set the metric to show only the bottom N child metrics with the **showBottom** field. The child metrics are sorted by the value of the last data point.    
+For example, showing only the bottom 2 API calls:
+```javascript
+{
+    path : ["counters"],
+    // the regex to match child nodes with
+    keyRegex : "API\\.(.*)",
+    // the metric field
+    metric : "count",
+    // the label in the graph. you can use a match group from the key regex
+    label : "API $1 calls",
+    // show only the bottom 2 (according to the last metric value)
+    showBottom : 2
+}
+```
+The **showTop** and **showBottom** fields can be combined if you want to show both sets of outliers.
 #####Filtering child metrics
 You can filter child metrics according to other fields in the selected node. To do that, pass a filter function in the **filter** field of the metric object. This function will receive an array of nodes (one from each URL). You can then process the nodes and return *true* to include the metric or *false* to exclude it from the collection.   
 For example, if our JSON contains timer objects for our API calls, each one with *m1_rate* field indicating the rate in the last minute and a *mean* field indicating the mean latency:
