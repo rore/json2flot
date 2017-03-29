@@ -1,9 +1,9 @@
 json2flot - graphing metrics using flot
 =========
-json2flot is a small Javascript library for collecting, aggregating and plotting real-time metrics using the [flot] (http://www.flotcharts.org/) plotting library.
+json2flot is a small Javascript library for collecting, aggregating and plotting real-time metrics using the [flot](http://www.flotcharts.org/) plotting library.
 
 The purpose of this library is building quick-and-dirty client-side-only dashboards, for graphing real-time metrics that are provided via a JSON API.   
-Initially this library targeted the output of the codahale [metrics] (http://metrics.codahale.com/) library, but in principle it can be used with any JSON formatted data.
+Initially this library targeted the output of the codahale [metrics](http://metrics.codahale.com/) library, but in principle it can be used with any JSON formatted data.
 
 An example use case is monitoring a cluster of servers exposing statistics and counters via an API. json2flot makes it easy to build a dashboard to show the real-time state of the cluster with no additional server-side requirements. It can collect the metrics from all the servers, aggregate and plot them on the client side.     
 
@@ -99,8 +99,8 @@ Configures a flot graph with a set of metrics.
 
 ##### Parameters:
 *placeholder* - The div name where the plot will be rendered.   
-*options* - The flot options object for this graph (see the [flot documentation] (https://github.com/flot/flot/blob/master/API.md#plot-options) for a full description).   
-*metrics* - An array of [metric objects] (#configuring-metrics) to collect and show on this graph. See [ahead] (#configuring-metrics) for more information.  
+*options* - The flot options object for this graph (see the [flot documentation](https://github.com/flot/flot/blob/master/API.md#plot-options) for a full description).   
+*metrics* - An array of [metric objects](#configuring-metrics) to collect and show on this graph. See [ahead](#configuring-metrics) for more information.  
 *totalPoints* - The total data points to keep for each metric in this graph. Defaults to 100. The number of data points means the maximum time window the graph shows.    
 
 Example:
@@ -122,7 +122,7 @@ json2flot.addGraph("#placeholder1", options, [ {
 }], 500);
 ```
 #### Configuring metrics
-The metric object is an extension of the flot [data format object] (https://github.com/flot/flot/blob/master/API.md#data-format), so it can include all the available flot fields for flot customization.
+The metric object is an extension of the flot [data format object](https://github.com/flot/flot/blob/master/API.md#data-format), so it can include all the available flot fields for flot customization.
 
 The metric object must include two additional fields:   
 **path** - An array indicating the path in the JSON object to the node containing the metric to collect.   
