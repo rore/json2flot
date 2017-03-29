@@ -8,9 +8,9 @@ Initially this library targeted the output of the codahale [metrics] (http://met
 An example use case is monitoring a cluster of servers exposing statistics and counters via an API. json2flot makes it easy to build a dashboard to show the real-time state of the cluster with no additional server-side requirements. It can collect the metrics from all the servers, aggregate and plot them on the client side.     
 
 ![](https://github.com/rore/json2flot/blob/master/examples/examplesnip.JPG?raw=true)
-##Usage 
+## Usage 
 (For a full usage example see the example.html file under the examples folder)
-###Basic usage
+### Basic usage
 Include the json2flot.js file in your HTML, along with the needed flot JS files.   
 Add a placeholder div for the flot graph (make sure you give it a size): 
 ```html
@@ -48,8 +48,8 @@ Start updating:
 ```javascript 
 json2flot.startUpdate();
 ```
-###json2flot Methods
-####setDataType
+### json2flot Methods
+#### setDataType
 Sets the default data type for the JSON fetch request.   
 Use "json" for a local file, "jsonp" for an AJAX cross-domain call.
 
@@ -58,7 +58,7 @@ Example:
 json2flot.setDataType('jsonp');
 ```
 
-####setMetricURLs
+#### setMetricURLs
 Sets an array of URLs to fetch the metrics JSON from.    
 The response metrics JSON is assumed to be of the same type. json2flot will fetch the response from each of the provided URLs, and will aggregate the requested metric values across all the responses. 
    
@@ -74,30 +74,30 @@ json2flot.setMetricURLs([
   { dataType: "json", type:"POST", url:"http://other.host.net/other/url"}
 ]);
 ```
-####setUpdateInterval
+#### setUpdateInterval
 Sets the interval (in milliseconds) for fetching the metrics and updating the graphs.
 
 Example:
 ```javascript 
 json2flot.setUpdateInterval(2000);
 ```
-####setRequestOptions
+#### setRequestOptions
 Sets the default ajax request settings object.
 
 Example:
 ```javascript 
 json2flot.setRequestOptions({ dataType: "json", type:"GET" });
 ```
-####startUpdate
+#### startUpdate
 Starts the updater timer. json2flot will fetch the metrics from the provided URLs at the configured update interval, aggregate the results and update the graphs.
 
-####stopUpdate
+#### stopUpdate
 Stops the updater timer. 
 
-####addGraph
+#### addGraph
 Configures a flot graph with a set of metrics.
 
-#####Parameters:
+##### Parameters:
 *placeholder* - The div name where the plot will be rendered.   
 *options* - The flot options object for this graph (see the [flot documentation] (https://github.com/flot/flot/blob/master/API.md#plot-options) for a full description).   
 *metrics* - An array of [metric objects] (#configuring-metrics) to collect and show on this graph. See [ahead] (#configuring-metrics) for more information.  
@@ -121,7 +121,7 @@ json2flot.addGraph("#placeholder1", options, [ {
 	label : "Total Get calls"
 }], 500);
 ```
-####Configuring metrics
+#### Configuring metrics
 The metric object is an extension of the flot [data format object] (https://github.com/flot/flot/blob/master/API.md#data-format), so it can include all the available flot fields for flot customization.
 
 The metric object must include two additional fields:   
@@ -143,7 +143,7 @@ By default, when the value of the metric is 0 it is treated as a valid metric. T
 ```javascript
 ignoreZeros : true
 ```
-#####Aggregation operation
+##### Aggregation operation
 As mentioned, when several URLs are configured, the library will fetch the JSON from each URL, and will aggregated the requested metric from all the responses. It's possible to define the aggregation operation for the metric by using the **operation** field. The default value is *"sum"*, which means the values are summed up. Another option is *"avg"* which will calculate the average of the values across all the URL responses.   
 Example:
 ```javascript
@@ -155,7 +155,7 @@ Example:
 	operation : "avg"
 }
 ```
-#####Regular expression metrics
+##### Regular expression metrics
 A metric object can be configured as a *regular expression metric* by using the **keyRegex** field. This field sets a regular expression to check against all the child nodes of the node that is configured in the **path**. Nodes that match the expression will be collected and treated as separate metrics.    
 For example, if we have a metrics JSON that holds counters for several API calls like this:
  ```javascript
@@ -219,7 +219,7 @@ For example, showing only the bottom 2 API calls:
 }
 ```
 The **showTop** and **showBottom** fields can be combined if you want to show both sets of outliers.
-#####Filtering child metrics
+##### Filtering child metrics
 You can filter child metrics according to other fields in the selected node. To do that, pass a filter function in the **filter** field of the metric object. This function will receive an array of nodes (one from each URL). You can then process the nodes and return *true* to include the metric or *false* to exclude it from the collection.   
 For example, if our JSON contains timer objects for our API calls, each one with *m1_rate* field indicating the rate in the last minute and a *mean* field indicating the mean latency:
 ```javascript
