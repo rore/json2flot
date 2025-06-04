@@ -102,7 +102,17 @@ ns.setRequestOptions = function(map) {
  *            The flot options object for the graph
  * @param metrics
  *            A list of metrics to plot on the graph. This is an extended
- *            flot data object
+ *            flot data object. Each metric can have the following properties:
+ *            - path: Path to the metric in the JSON structure (array or string)
+ *            - metric: The specific metric name to collect
+ *            - label: The label to display in the graph
+ *            - operation: 'sum' or 'avg' to aggregate across multiple servers (default: 'sum')
+ *            - showIndividual: Set to true to show individual lines for each server (default: false)
+ *            - keyRegex: For regex metrics, a pattern to match child nodes
+ *            - showTop: For regex metrics, limit to top N results
+ *            - showBottom: For regex metrics, limit to bottom N results
+ *            - ignoreZeros: Ignore metrics with zero value
+ *            - filter: Custom filter function
  * @param totalPoints
  *            The total number of points to keep for each metric. Defaults
  *            to 100
@@ -185,6 +195,10 @@ function MetricsGraph(placeholder, options, metrics, totalPoints) {
             metric.operation = "sum";
         } else if (metric.operation != "sum" && metric.operation != "avg")
             throw ("Invalid metric operation: " + metric.operation);
+        // Default to false if not set - don't show individual server metrics
+        if (typeof (metric.showIndividual) === 'undefined') {
+            metric.showIndividual = false;
+        }
         // is this a regex metric?
         if (metric.keyRegex) {
             // create the regex object
@@ -195,6 +209,8 @@ function MetricsGraph(placeholder, options, metrics, totalPoints) {
             metric.regexLabel = metric.label;
             metric.label = null;
         }
+        // Initialize serverMetrics for individual server data storage
+        metric.serverMetrics = {};
     }
 
     this.initMetric = prepareMetric;
@@ -417,9 +433,22 @@ function processMetrics(metricResults) {
                 if (metricValid && metric.data.length > 0)
                     data.push(metric);
             }
+        }        // update the graph with the new data and redraw it
+        // Add individual server metrics to the graph data if enabled
+        for (var m = 0; m < graph.metricData.length; m++) {
+            var metric = graph.metricData[m];
+            if (metric.showIndividual && !metric.keyRegex) {
+                for (var serverKey in metric.serverMetrics) {
+                    if (metric.serverMetrics.hasOwnProperty(serverKey)) {
+                        var serverMetric = metric.serverMetrics[serverKey];
+                        if (serverMetric.data.length > 0) {
+                            data.push(serverMetric);
+                        }
+                    }
+                }
+            }
         }
-
-        // update the graph with the new data and redraw it
+        
         graph.plot.setData(data);
         graph.plot.setupGrid();
         graph.plot.draw();
@@ -440,8 +469,7 @@ function processMetrics(metricResults) {
         }
         return true;
     }
-    
-    /**
+      /**
      * collects a specific metric from the results
      * returns the collected value if found, or null if it was filtered out.
      */
@@ -459,6 +487,38 @@ function processMetrics(metricResults) {
                     val = metval;
                 else if (metric.operation == "sum" || metric.operation == "avg") {
                     val += metval;
+                }
+                
+                // Store individual server metrics if showIndividual is enabled
+                if (metric.showIndividual) {
+                    var serverUrl = metricResults.urls[n];
+                    // Create a unique key for this server
+                    var serverKey = typeof serverUrl === 'string' ? serverUrl : 'server' + n;
+                    
+                    // Initialize server metric if it doesn't exist
+                    if (!metric.serverMetrics[serverKey]) {
+                        metric.serverMetrics[serverKey] = {
+                            data: [],
+                            label: metric.label + ' (' + serverKey + ')',
+                            yaxis: metric.yaxis, // Inherit the same axis
+                            lines: { lineWidth: 1 }, // Thinner lines for individual servers
+                            color: null // Will be assigned automatically by flot
+                        };
+                    }
+                    
+                    // Add data point for this server
+                    var serverSeries = [ metricResults.time.getTime(), metval ];
+                    metric.serverMetrics[serverKey].data.push(serverSeries);
+                    
+                    // Keep only totalPoints data points
+                    if (metric.serverMetrics[serverKey].data.length > graph.totalPoints) {
+                        metric.serverMetrics[serverKey].data = metric.serverMetrics[serverKey].data.slice(1);
+                    }
+                    
+                    // Sort the data by time
+                    metric.serverMetrics[serverKey].data = metric.serverMetrics[serverKey].data.sort(function (a, b) {
+                        return a[0] - b[0];
+                    });
                 }
             }
         }

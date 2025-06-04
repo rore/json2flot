@@ -151,10 +151,27 @@ Example:
 	path : [ "timers", "API.get" ],
 	metric : "mean",
 	label : "Avg Get latency",
-        // calculate an average of the metric values from the separate results
+    // calculate an average of the metric values from the separate results
 	operation : "avg"
 }
 ```
+
+##### Individual server metrics
+By default, when multiple URLs are configured, the library will aggregate the metrics from all servers using the selected operation (sum or avg). If you want to also see the individual metrics from each server, you can set the **showIndividual** option to *true*. This will display a separate line for each server in addition to the aggregated metric line.
+
+Example:
+```javascript
+{
+	path : [ "timers", "API.get" ],
+	metric : "mean",
+	label : "Avg Get latency",
+    // calculate an average of the metric values from the separate results
+	operation : "avg",
+    // Show individual server metrics in addition to the aggregated value
+	showIndividual : true
+}
+```
+
 ##### Regular expression metrics
 A metric object can be configured as a *regular expression metric* by using the **keyRegex** field. This field sets a regular expression to check against all the child nodes of the node that is configured in the **path**. Nodes that match the expression will be collected and treated as separate metrics.    
 For example, if we have a metrics JSON that holds counters for several API calls like this:
@@ -288,6 +305,7 @@ The tests cover the following functionality:
    - showTop and showBottom parameters (individually and combined)
    - ignoreZeros parameter
    - Operation parameter (sum vs avg)
+   - showIndividual parameter for displaying individual server metrics
    - Filter functions
 
 4. **Error Handling**
