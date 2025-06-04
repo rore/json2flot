@@ -4,5 +4,8 @@
   "description": "json2flot utilities",
   "scripts": {
     "test": "node tests/test.js"
+  },
+  "dependencies": {
+    "json2flot": "file:"
   }
 }
