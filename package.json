@@ -1,0 +1,8 @@
+{
+  "name": "json2flot",
+  "version": "1.0.0",
+  "description": "json2flot utilities",
+  "scripts": {
+    "test": "node tests/test.js"
+  }
+}

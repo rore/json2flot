@@ -261,3 +261,6 @@ We can show the top 5 latencies of API calls that had over 2 requests in the las
 }
 ```
  
+## Tests
+Run `npm test` to execute the Node-based unit tests.
+

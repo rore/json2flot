@@ -404,11 +404,10 @@
 						for ( var n = 0; n < stop; n++) {
 							data.push(sortedMetrics[n].metric);
 						}
-                                                var bottom = Math.max(0, metric.showBottom || 0);
-                                                var start = Math.max(stop, sortedMetrics.length - bottom);
-						for ( var n = start; n < sortedMetrics.length; n++) {
-							data.push(sortedMetrics[n].metric);
-						}
+            var bottom = Math.max(0, metric.showBottom || 0);
+            var start = Math.max(stop, sortedMetrics.length - bottom);
+            for ( var n = start; n < sortedMetrics.length; n++) {
+                    data.push(sortedMetrics[n].metric);
 					}
 				} else {
 					var metricValid = isMetricValid(metric, metricResults);
@@ -605,7 +604,17 @@
 		} else if (deferred !== firstParam) {
 			deferred.resolveWith(deferred, length ? [ firstParam ] : []);
 		}
-		return deferred.promise();
-	};
+                return deferred.promise();
+       };
+
+       json2flot._test = {
+               processMetrics: processMetrics,
+               UpdateResults: UpdateResults,
+               MetricsGraph: MetricsGraph
+       };
 
 }(window.json2flot = window.json2flot || {}, jQuery));
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = window.json2flot;
+}
