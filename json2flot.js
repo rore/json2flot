@@ -199,10 +199,10 @@
 		this.initMetric = prepareMetric;
 	}
 
-	/**
-	 * An array of graph object
-	 */
-	var graphs = [];
+        /**
+         * An array of graph objects.
+         */
+        var graphs = [];
 	/**
 	 * An array of URLs to fetch the metrics JSON from
 	 */
