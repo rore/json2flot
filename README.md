@@ -151,7 +151,7 @@ Example:
 	path : [ "timers", "API.get" ],
 	metric : "mean",
 	label : "Avg Get latency",
-	// calculate an avarage of the metric values from the separate results 
+        // calculate an average of the metric values from the separate results
 	operation : "avg"
 }
 ```
@@ -239,7 +239,7 @@ We can show the top 5 latencies of API calls that had over 2 requests in the las
 	keyRegex : "API\\.(.*)",
 	metric : "mean",
 	label : "API $1 latency",
-	// calculate an avarage of the metric values from the separate results 
+        // calculate an average of the metric values from the separate results
 	operation : "avg",
 	// show only the top 5 (according to the last metric value)
 	showTop : 5,
