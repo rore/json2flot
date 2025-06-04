@@ -262,5 +262,41 @@ We can show the top 5 latencies of API calls that had over 2 requests in the las
 ```
  
 ## Tests
-Run `npm test` to execute the Node-based unit tests.
+Run `npm test` to execute all tests (basic, comprehensive, and integration).
+
+You can also run individual test suites:
+- `npm run test:basic` - Run basic functionality test
+- `npm run test:comprehensive` - Run comprehensive test suite
+- `npm run test:integration` - Run integration test
+
+### Test Coverage
+
+The tests cover the following functionality:
+
+1. **Basic Configuration**
+   - Setting and getting update interval
+   - Setting and getting data type
+   - Setting metric URLs (single URL, multiple URLs)
+   - Setting request options
+
+2. **Graph Creation**
+   - Creating graphs with basic metrics
+   - Handling path as string or array
+
+3. **Metrics Processing**
+   - Regular expression metrics
+   - showTop and showBottom parameters (individually and combined)
+   - ignoreZeros parameter
+   - Operation parameter (sum vs avg)
+   - Filter functions
+
+4. **Error Handling**
+   - Invalid data types
+   - Invalid operations
+   - Missing required fields
+   - Invalid metric paths
+
+5. **Integration Testing**
+   - End-to-end testing of multiple graph configurations
+   - Combined functionality testing with mock data
 

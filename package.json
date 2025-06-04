@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "json2flot utilities",
   "scripts": {
-    "test": "node tests/test.js"
+    "test": "node tests/test.js && node tests/comprehensive_tests.js && node tests/integration_test.js",
+    "test:basic": "node tests/test.js",
+    "test:comprehensive": "node tests/comprehensive_tests.js",
+    "test:integration": "node tests/integration_test.js"
   },
   "dependencies": {
     "json2flot": "file:"
