@@ -404,11 +404,10 @@
 						for ( var n = 0; n < stop; n++) {
 							data.push(sortedMetrics[n].metric);
 						}
-                                                var bottom = Math.max(0, metric.showBottom || 0);
-                                                var start = Math.max(stop, sortedMetrics.length - bottom);
-                                                for ( var n = start; n < sortedMetrics.length; n++) {
-                                                        data.push(sortedMetrics[n].metric);
-                                                }
+            var bottom = Math.max(0, metric.showBottom || 0);
+            var start = Math.max(stop, sortedMetrics.length - bottom);
+            for ( var n = start; n < sortedMetrics.length; n++) {
+                    data.push(sortedMetrics[n].metric);
 					}
 				} else {
 					var metricValid = isMetricValid(metric, metricResults);
